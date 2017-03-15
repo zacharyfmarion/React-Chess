@@ -1,0 +1,9 @@
+.board {
+  width: 440px;
+  border: 5px solid #e9b961;
+  margin: 25px;
+}
+
+.board-row {
+  font-size: 0;
+}
