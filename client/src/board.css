@@ -1,9 +1,16 @@
 .board {
   width: 440px;
+  height: 440px;
   border: 5px solid #e9b961;
-  margin: 25px;
+  margin: 25px auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .board-row {
-  font-size: 0;
+  /* font-size: 0; */
+  line-height: 0;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
 }

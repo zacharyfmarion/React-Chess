@@ -1,7 +1,8 @@
 .tile {
-  width: 55px;
-  height: 55px;
-  display: inline-block;
+  /* width: 55px; */
+  /* height: 55px; */
+  /* display: inline-block; */
+  flex: 1;
 }
 
 .tile-white {

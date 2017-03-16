@@ -34,8 +34,8 @@ class StudentPlayer(GamePlayer):
         pieces that the opponent has captured
         '''
         # pieces that I have captured
-        other_color = Color.WHITE if state.color == Color.BLACK else Color.BLACK
-        my_captured = sum([int(piece) for piece in state.pieces[state.color]])
+        other_color = Color.WHITE if self.color == Color.BLACK else Color.BLACK
+        my_captured = sum([int(piece) for piece in state.pieces[self.color]])
         their_captured = sum([int(piece) for piece in state.pieces[other_color]])
         captured_diff = my_captured - their_captured
         # Also check who has better control of the center of the board...for now just

@@ -61,8 +61,10 @@ class Pawn(Piece):
 
     def valid_moves(self, location, state):
         moves = []
-        # if we are on the first row:
-        if location[0] == 1 and not isinstance(state.board[3][location[1]], Piece):
+        # if we are on the first row, we can move forward if we are not blocked by
+        # another piece
+        if location[0] == 1 and not isinstance(state.board[2][location[1]], Piece) and \
+                                not isinstance(state.board[3][location[1]], Piece):
             moves.append((3, location[1]))
         for i in [-1, 0, 1]:
             new_row = location[0] + 1

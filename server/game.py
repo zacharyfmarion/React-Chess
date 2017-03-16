@@ -56,12 +56,19 @@ class ChessGame:
             board[7-i] = temp
         self.state.board = board
 
+    def flip_coords(self, move):
+        start, end = move
+        start = (7 - start[0], 7 - start[1])
+        end = (7 - end[0], 7 - end[1])
+        return (start, end)
+
     def play_game(self, player1, player2):
         ''' Play a game with two minimax agents '''
         curr_player = player1 if player1.color == self.state.color else player2
         while True:
             print("{} Making their move:\n".format(curr_player.color))
             move, new_state = curr_player.alpha_beta_move(self.state)
+            move = move if curr_player.color == Color.WHITE else self.flip_coords(move)
             start, end = move
             yield {
                 'start': {'row': start[0], 'col': start[1]},

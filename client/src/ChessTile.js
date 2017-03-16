@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import ChessPiece from './ChessPiece'
 import "./tile.css"
 
 /*
@@ -19,9 +20,13 @@ export default class ChessTile extends Component {
   }
 
   render() {
-    const tileClass = 'tile tile-' + this.props.color
+    const { piece, color } = this.props
+    const tileClass = 'tile tile-' + color
+    const tileContents = piece == null ? null : <ChessPiece {...piece}/>
     return (
-      <div className={tileClass}> {this.props.piece} </div>
+      <div className={tileClass}> 
+        {tileContents}
+      </div>
     )	
   }
 }
