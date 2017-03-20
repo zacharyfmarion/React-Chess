@@ -1,9 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 import { SocketProvider } from 'socket.io-react'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import { Provider } from 'react-redux'
 import { orangeA400 } from 'material-ui/styles/colors'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import io from 'socket.io-client'
+import store from './redux/store'
 import colors from './constants/colors'
 import App from './App'
 
@@ -26,11 +28,13 @@ const muiTheme = getMuiTheme({
 export default class AppContainer extends Component {
   render() {
     return (
-      <SocketProvider socket={socket}>
-        <MuiThemeProvider theme={muiTheme}>
-          <App />
-        </MuiThemeProvider>
-      </SocketProvider>	
+      <Provider store={store}>
+        <SocketProvider socket={socket}>
+          <MuiThemeProvider theme={muiTheme}>
+            <App />
+          </MuiThemeProvider>
+        </SocketProvider>	
+      </Provider>
     )	
   }
 }

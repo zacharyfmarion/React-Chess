@@ -1,6 +1,12 @@
+.board-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 .board {
-  width: 440px;
-  height: 440px;
+  width: 550px;
+  height: 550px;
   border: 5px solid #e9b961;
   margin: 25px auto;
   display: flex;

@@ -58,6 +58,7 @@ class Pawn(Piece):
 
     def __init__(self, color):
         Piece.__init__(self, color)
+        self.name = 'pawn'
 
     def valid_moves(self, location, state):
         moves = []
@@ -87,6 +88,7 @@ class Knight(Piece):
 
     def __init__(self, color):
         Piece.__init__(self, color)
+        self.name = 'knight'
 
     def valid_moves(self, location, state):
         moves = []
@@ -109,6 +111,7 @@ class Bishop(Piece):
 
     def __init__(self, color):
         Piece.__init__(self, color)
+        self.name = 'bishop'
 
     def moves_helper(self, location, state, row_dir, col_dir):
         ''' Helper function to compute the valid moves in a given direction '''
@@ -146,6 +149,7 @@ class Rook(Piece):
 
     def __init__(self, color):
         Piece.__init__(self, color)
+        self.name = 'rook'
 
     def moves_helper(self, location, state, row_dir, col_dir):
         ''' Helper function to compute the valid moves in a given direction '''
@@ -181,6 +185,7 @@ class Queen(Piece):
 
     def __init__(self, color):
         Piece.__init__(self, color)
+        self.name = 'queen'
 
     def moves_helper(self, location, state, row_dir, col_dir):
         ''' Helper function to compute the valid moves in a given direction '''
@@ -217,6 +222,7 @@ class King(Piece):
 
     def __init__(self, color):
         Piece.__init__(self, color)
+        self.name = 'king'
 
     def valid_moves(self, location, state):
         moves = []
@@ -232,7 +238,7 @@ class King(Piece):
         return moves
         pass
 
-    def __int__(self): return 1000 
+    def __int__(self): return 200
     def __str__(self): return "♔"
 
 # Need to avoid circular dependencies

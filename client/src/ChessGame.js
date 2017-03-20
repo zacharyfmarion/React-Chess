@@ -1,13 +1,12 @@
 import React, { Component, PropTypes } from 'react'
 import { socketConnect } from 'socket.io-react'
+import { connect } from 'react-redux'
+import { 
+  updateCaptured, 
+  addMove, 
+  updatePieces 
+} from './redux/actions/gameActions'
 import ChessBoard from './ChessBoard'
-
-/*
- * Generate the minimal representation of a chess piece
- */
-const Piece = (type, color) => {
-  return { type, color }
-}
 
 /*
  * A game of chess...maps the board to pieces and updates the state
@@ -17,20 +16,18 @@ class ChessGame extends Component {
 
   static propTypes = {
     playing: PropTypes.bool.isRequired, 
+    updateCaptured: PropTypes.func.isRequired,
   }
 
   constructor(props) {
     super(props)
     this.state = {
-      pieces: null, 
+      // currently highlighted moves
+      highlighted: [] 
     }
+    // binding instance methods
     this._executeMove = this._executeMove.bind(this)
-    this.getInitialLocations = this.getInitialLocations.bind(this)
-  }
-
-  componentWillMount() {
-    // initialize the locations of the chess pieces
-    this.getInitialLocations()
+    this.getValidMoves = this.getValidMoves.bind(this)
   }
 
   componentDidMount() {
@@ -40,68 +37,57 @@ class ChessGame extends Component {
   }
 
   /*
+   * Make a call to the server to get the valid moves associated with a 
+   * given piece.
+   */
+  getValidMoves(row, col) {
+    this.props.socket.emit('valid-moves', {row, col}, (highlighted) => {
+      // console.log(highlighted)
+      this.setState({ highlighted })
+    })
+  }
+
+  /*
    * Function called when a move is made to the by the server
    * @param {Object} state - An object containing the start indices
    * @param {Object} end - An object containing the end indices
+   *
+   * TODO: THIS SHOULD ALL BE ENCAPSULATED IN REDUX...playing should be a variable
+   * in the redux state
    */
-  _executeMove(start, end) {
+  _executeMove(start, end, captured) {
+    // console.log("Captured: ", captured)
+    this.props.dispatch(addMove({start, end, captured}))
+    this.props.dispatch(updateCaptured(captured))
     // start and end are both objects with { row: 2, col: 6 }
-    const pieces = this.state.pieces.slice()
-    const piece = this.state.pieces[start.row][start.col]
+    const pieces = this.props.pieces.slice()
+    const piece = pieces[start.row][start.col]
     pieces[end.row][end.col] = piece
     pieces[start.row][start.col] = null
-    this.setState({ pieces })
+    this.props.dispatch(updatePieces(pieces))
     // request the next move as soon as we finish with this one
     if (this.props.playing) {
       this.props.socket.emit('request-move')
     }
   }
 
-  /*
-   * Get the initial piece associated with a square on the board
-   * @param {Number} i - The row of the piece
-   * @param {Number} j - The column of the piece
-   * @return {Renderable} A ChessPiece component or null
-   */
-  getInitialPiece(i, j, key) {
-    let piece = null
-    const color = i < 2 ? 'white' : 'black'
-    if (i === 0 || i === 7) {
-      if (j === 0 || j === 7) piece = Piece('rook', color)
-      else if (j === 1 || j === 6) piece = Piece('knight', color)
-      else if (j === 2 || j === 5) piece = Piece('bishop', color)
-      else if (j === 3) {
-        const type = color === 'white' ? 'king' : 'queen' 
-        piece = Piece(type, color) 
-      }
-      else if (j === 4) {
-        const type = color === 'white' ? 'queen' : 'king' 
-        piece = Piece(type, color) 
-      }
-    } else if (i === 1 || i === 6) {
-      piece = Piece('pawn', color) 
-    }
-    return piece 
-  }
-
-  /*
-   * Get the initial locations for all of the peices
-   */
-  getInitialLocations() {
-    const pieces = [...new Array(8)].map((x, i) => {
-      return [...new Array(8)].map((y, j) => {
-        return this.getInitialPiece(i, j, [i, j])
-      })
-    })
-    this.setState({ pieces })
-  }
-
-
   render() {
     return (
-      <ChessBoard pieces={this.state.pieces}/>      	
-    )	
+      <ChessBoard 
+        getValidMoves={this.getValidMoves} 
+        highlighted={this.state.highlighted}
+        pieces={this.props.pieces}
+      />
+    )
   }
 }
 
-export default socketConnect(ChessGame)
+const mapStateToProps = (state) => {
+  return {
+    pieces: state.game.present.pieces,
+  }
+}
+
+export default connect(
+  mapStateToProps
+)(socketConnect(ChessGame))

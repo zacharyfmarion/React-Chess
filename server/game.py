@@ -56,13 +56,18 @@ class ChessGame:
             board[7-i] = temp
         self.state.board = board
 
+    def valid_moves(self, row, col):
+        ''' Return the moves that are valid for a given piece on the board '''
+        piece = self.state.board[row][col]
+        return [] if not isinstance(piece, Piece) else piece.valid_moves((row, col), self.state)
+
     def flip_coords(self, move):
         start, end = move
         start = (7 - start[0], 7 - start[1])
         end = (7 - end[0], 7 - end[1])
         return (start, end)
 
-    def play_game(self, player1, player2):
+    def play_game(self, player1, player2, verbose=False):
         ''' Play a game with two minimax agents '''
         curr_player = player1 if player1.color == self.state.color else player2
         while True:
@@ -72,17 +77,25 @@ class ChessGame:
             start, end = move
             yield {
                 'start': {'row': start[0], 'col': start[1]},
-                'end': {'row': end[0], 'col': end[1]}
+                'end': {'row': end[0], 'col': end[1]},
+                'captured': {
+                    'white': [{'color': 'black', 'type': piece.name} for piece \
+                            in new_state.pieces[Color.WHITE]],
+                    'black': [{'color': 'white', 'type': piece.name} for piece \
+                            in new_state.pieces[Color.BLACK]],
+                }
             }
             # If we are at the end of the game (no more moves) then break
             if move == -1: break
             self.state = new_state
             curr_player = player1 if curr_player == player2 else player2
-            #  if curr_player.color == Color.WHITE: self.print_board()
+            if verbose:
+                if curr_player.color == Color.WHITE: self.print_board()
             self.rotate_board()
-            #  if curr_player.color == Color.BLACK: self.print_board()
-            #  print("White: ", [str(piece) for piece in self.state.pieces[Color.WHITE]])
-            #  print("Black: ", [str(piece) for piece in self.state.pieces[Color.BLACK]], "\n")
+            if verbose:
+                if curr_player.color == Color.BLACK: self.print_board()
+                print("White: ", [str(piece) for piece in self.state.pieces[Color.WHITE]])
+                print("Black: ", [str(piece) for piece in self.state.pieces[Color.BLACK]], "\n")
         print("\nGame ended")
     
     def get_successors(self, state):

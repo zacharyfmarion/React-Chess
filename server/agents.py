@@ -7,11 +7,12 @@ from color import Color
 class GamePlayer(object):
     '''Represents the logic for an individual player in the game'''
 
-    def __init__(self, color, game):
+    def __init__(self, color, game, horizon):
         '''"player_id" indicates which player is represented (int)
         "game" is a game object with a get_successors function'''
         self.color = color
         self.game = game
+        self.horizon = horizon
         return
 
     def evaluate(self, state):
@@ -24,8 +25,8 @@ class GamePlayer(object):
         pass
 
 class StudentPlayer(GamePlayer):
-    def __init__(self, color, game):
-        GamePlayer.__init__(self, color, game)
+    def __init__(self, color, game, horizon):
+        GamePlayer.__init__(self, color, game, horizon)
 
     def evaluate(self, state):
         ''' 
@@ -44,8 +45,7 @@ class StudentPlayer(GamePlayer):
 
     def alpha_beta_move(self, state):
         assert state.color == self.color
-        horizon = 3
-        return alpha_beta(self.game, state, 0, horizon, self.evaluate, \
+        return alpha_beta(self.game, state, 0, self.horizon, self.evaluate, \
                 float("-inf"), float("inf"))
 
 def center_diff(state):
@@ -69,14 +69,16 @@ def alpha_beta(game, state, depth, horizon, eval_fn, alpha, beta):
     with alpha-beta pruning """
     successors, actions = game.get_successors(state)
     # IF THERE ARE NO MORE SUCCESSORS THE GAME IS OVER
-    if len(successors) == 0: return (-1, -1)
+    if len(successors) == 0: 
+        print("No more successors") 
+        return (((0, 0), (0, 0)), state)
     # add a new 
     options = [ab_min_value(game, new_state, depth + 1, horizon, eval_fn, alpha, beta) \
                   for new_state in successors]
     max_val = max(options)
     argmaxes = [i for i, x in enumerate(options) if x == max_val]
     index_choice = random.choice(argmaxes)
-    #  print("Hueristic: ", options[index_choice])
+    print("Hueristic: ", options[index_choice])
     return (actions[index_choice], successors[index_choice])
 
 def ab_max_value(game, state, depth, horizon, eval_fn, alpha, beta):

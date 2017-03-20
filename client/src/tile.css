@@ -12,3 +12,8 @@
 .tile-black {
   background-color: #555;
 }
+
+.tile-highlighted {
+  background-color: lightblue !important;
+  /* border: 2px solid black; */
+}

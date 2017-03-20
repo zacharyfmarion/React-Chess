@@ -10,8 +10,10 @@ export default class ChessTile extends Component {
 
   static propTypes = {
     /* Color is a string - either 'white', or 'black' */
+    tileClicked: PropTypes.func.isRequired,
     color: PropTypes.string,
     piece: PropTypes.object,
+    highlighted: PropTypes.bool.isRequired,
   }
 
   static defaultProps = {
@@ -21,10 +23,10 @@ export default class ChessTile extends Component {
 
   render() {
     const { piece, color } = this.props
-    const tileClass = 'tile tile-' + color
+    const tileClass = 'tile tile-' + color + (this.props.highlighted ? ' tile-highlighted' : '')
     const tileContents = piece == null ? null : <ChessPiece {...piece}/>
     return (
-      <div className={tileClass}> 
+      <div className={tileClass} onClick={this.props.tileClicked}> 
         {tileContents}
       </div>
     )	
